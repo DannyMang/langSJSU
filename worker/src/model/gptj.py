@@ -5,11 +5,13 @@ import json
 
 load_dotenv()
 
-class GPT:
+class LLAMA2:
     def __init__(self):
         self.url = os.environ.get('MODEL_URL')
         self.headers = {
-            "Authorization": f"Bearer {os.environ.get("HUGGINGFACEHUB_API_TOKEN")}"}
+            "Authorization": f"Bearer {os.environ.get('HUGGINGFACEHUB_API_TOKEN')}",
+            "Content-Type": "application/json"
+        }
         self.payload = {
             "inputs": "",
             "parameters": {
@@ -21,12 +23,27 @@ class GPT:
         }
 
     def query(self, input: str) -> list:
-        self.payload["inputs"] = input
-        data = json.dumps(self.payload)
-        response = requests.request(
-            "POST", self.url, headers=self.headers, data=data)
-        print(json.loads(response.content.decode("utf-8")))
-        return json.loads(response.content.decode("utf-8"))
+        try:
+            self.payload["inputs"] = input
+            data = json.dumps(self.payload)
+            response = requests.post(self.url, headers=self.headers, data=data)
+            
+            # Check if the response status code is OK (200)
+            response.raise_for_status()
+            
+            # Attempt to parse the response as JSON
+            response_json = response.json()
+            print(response_json)
+        
+        except requests.exceptions.RequestException as e:
+            print(f"Error during request: {e}")
+            
+        except json.JSONDecodeError as e:
+            print(f"Error decoding JSON response: {e}")
+            
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+
 
 if __name__ == "__main__":
-    GPT().query("Will artificial intelligence help humanity conquer the universe?")
+    LLAMA2().query("Will artificial intelligence help humanity conquer the universe?")
