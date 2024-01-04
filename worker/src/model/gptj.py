@@ -15,7 +15,7 @@ class LLAMA2:
         self.payload = {
             "inputs": "",
             "parameters": {
-                "return_full_text": False,
+                "return_full_text": True,
                 "use_cache": True,
                 "max_new_tokens": 25
             }
@@ -32,8 +32,11 @@ class LLAMA2:
             response.raise_for_status()
             
             # Attempt to parse the response as JSON
-            response_json = response.json()
-            print(response_json)
+            data = json.loads(response.content.decode("utf-8"))
+            text = data[0]['generated_text']
+
+            print(text)
+ 
         
         except requests.exceptions.RequestException as e:
             print(f"Error during request: {e}")
@@ -46,4 +49,4 @@ class LLAMA2:
 
 
 if __name__ == "__main__":
-    LLAMA2().query("Will artificial intelligence help humanity conquer the universe?")
+    LLAMA2().query("Are dogs smarter than cats??")
