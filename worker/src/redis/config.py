@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 import redis
+from rejson import Client
 
 load_dotenv()
 
@@ -15,3 +16,9 @@ class Redis():
     async def create_connection(self):
         client = redis.Redis.from_url(self.connection_url, db=0)
         return client
+    
+    def create_rejson_connection(self):
+        self.redisJson = Client(host=self.REDIS_HOST,
+                                port=self.REDIS_PORT, decode_responses=True, username=self.REDIS_USER, password=self.REDIS_PASSWORD)
+
+        return self.redisJson
