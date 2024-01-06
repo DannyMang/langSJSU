@@ -9,12 +9,15 @@ from src.schemas.chat import Chat
 from rejson import Path
 from ..redis.stream import StreamConsumer
 from ..redis.cache import Cache
+from ..mongodb.config import Mongo
 import time
+
 
 
 chat = APIRouter()
 manager = ConnectionManager()
 redis = Redis()
+mongo = Mongo()
 
 # @route   POST /token
 # @desc    Route to generate chat token
