@@ -22,8 +22,6 @@ mongo = Mongo()
 # @route   POST /token
 # @desc    Route to generate chat token
 # @access  Public
-
-
 @chat.post("/token")
 async def token_generator(name: str, request: Request):
     token = str(uuid.uuid4())
@@ -56,8 +54,6 @@ async def token_generator(name: str, request: Request):
 # @route   POST /refresh_token
 # @desc    Route to refresh token
 # @access  Public
-
-
 @chat.get("/refresh_token")
 async def refresh_token(request: Request, token: str):
     json_client = redis.create_rejson_connection()
@@ -74,9 +70,6 @@ async def refresh_token(request: Request, token: str):
 # @route   Websocket /chat
 # @desc    Socket for chatbot
 # @access  Public
-
-# kind of slow  fix later 
-
 @chat.websocket("/chat")
 async def websocket_endpoint(websocket: WebSocket, token: str = Depends(get_token)):
     await manager.connect(websocket)
