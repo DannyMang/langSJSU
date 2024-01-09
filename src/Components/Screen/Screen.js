@@ -1,17 +1,19 @@
 // Screen.js
 import React, { useState } from 'react';
+import axios from 'axios';
 import './Screen.css';
 
 function Screen({ onEmailSubmit }) {
   const [email, setEmail] = useState('');
 
-  const handleSubmit = () => {
-    if (email.trim() !== '') {
-      onEmailSubmit(email);
+  const handleSubmit = async () => {
+    if ((email.trim() !== '') && email.endsWith('@sjsu.edu')) {
+      onEmailSubmit(email)
     } else {
       alert('Please enter a valid SJSU email.');
     }
   };
+  
 
   return (
     <div className="screen-container">
