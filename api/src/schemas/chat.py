@@ -9,11 +9,10 @@ class Message(BaseModel):
     msg: str
     timestamp = str(datetime.now())
 
-
 class Chat(BaseModel):
     token: str
     messages: List[Message]
-    name: str
+    email: str
     session_start = str(datetime.now())
 
 class DataObject(BaseModel):

@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request
 import uvicorn
 import os
 from dotenv import load_dotenv
-import multiprocessing
+import multiprocessing  
 from src.routes.chat import chat
 from fastapi.middleware.cors import CORSMiddleware
 

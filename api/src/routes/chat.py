@@ -50,20 +50,21 @@ async def create_embedding(file_request: str,collection=Depends(mongo.get_collec
 # @desc    Route to generate chat token
 # @access  Public
 @chat.post("/token")
-async def token_generator(name: str, request: Request):
+async def token_generator(email: str, request: Request):
     token = str(uuid.uuid4())
 
-    if name == "":
+    if not email.endswith("@sjsu.edu"):
         raise HTTPException(status_code=400, detail={
-            "loc": "name",  "msg": "Enter a valid name"})
+            "loc": "name",  "msg": "Enter a valid SJSU email"})
 
     # Create new chat session
     json_client = redis.create_rejson_connection()
-
+    print("Connected to DB!")
+    
     chat_session = Chat(
         token=token,
         messages=[],
-        name=name
+        email = email
     )
 
     # Store chat session in redis JSON with the token as key
