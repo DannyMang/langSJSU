@@ -1,23 +1,50 @@
 import os
 from fastapi import APIRouter, FastAPI, WebSocket, WebSocketDisconnect, Request, Depends, HTTPException
+from fastapi.responses import JSONResponse
 import uuid
 from ..socket.connection import ConnectionManager
 from ..socket.utils import get_token
 from ..redis.producer import Producer
 from ..redis.config import Redis
-from src.schemas.chat import Chat
+from src.schemas.chat import Chat, DataObject
 from rejson import Path
 from ..redis.stream import StreamConsumer
 from ..redis.cache import Cache
 from ..mongodb.config import Mongo
+from ..mongodb.utils import vector_embedding, get_pdf_files
 import time
-
-
 
 chat = APIRouter()
 manager = ConnectionManager()
 redis = Redis()
 mongo = Mongo()
+
+# @route 
+#@desc assuming you do nothing this message should appear in your localhost http://localhost:3500/
+@chat.get("/")
+def index():
+    return {"message": "Welcome To FastAPI"}
+
+
+# @route POST /create_embedding
+#@desc Route to create vector embedding for mongo database
+#@access PUBLIC
+@chat.post("/create_embedding")
+async def create_embedding(file_request: str,collection=Depends(mongo.get_collection)):
+    file_directory = get_pdf_files(file_request)
+
+    # Process each PDF file and store the results in MongoDB
+    embeddings = vector_embedding(file_directory)  # Use your vector_embedding method
+    data_to_insert = {
+        "title": file_directory,
+        "embedding": embeddings
+    }
+    
+    await collection.insert_one(data_to_insert)
+
+    return JSONResponse(content={"message": "PDFs processed and embeddings stored successfully"})
+
+
 
 # @route   POST /token
 # @desc    Route to generate chat token

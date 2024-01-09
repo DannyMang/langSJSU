@@ -15,3 +15,9 @@ class Chat(BaseModel):
     messages: List[Message]
     name: str
     session_start = str(datetime.now())
+
+class DataObject(BaseModel):
+    file_directory: str
+    title : str 
+    embedding : List[float]
+

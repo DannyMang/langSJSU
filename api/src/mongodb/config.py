@@ -1,17 +1,20 @@
 import os
 from dotenv import load_dotenv
-from pymongo import MongoClient
-
+from motor.motor_asyncio import AsyncIOMotorClient
 
 load_dotenv()
 
-class Mongo():
-    def __init__(self):
-        """initialize  connection """
-        mongo_uri =  os.environ["MONGO_DB_URL"]
-        self.client = MongoClient(mongo_uri)
-        self.db = self.client["your_database_name"]
+class Mongo:
+    DATABASE_NAME = os.environ["MONGO_DB_DATABASE"]
 
-    def __del__(self):
-        # Close the connection on object deletion
-        self.client.close()
+    def __init__(self):
+        self.client = AsyncIOMotorClient(os.environ["MONGO_DB_URL"])
+        self.db = self.client[self.DATABASE_NAME]
+
+    async def get_collection(self, collection_name: str):
+        """Retrieves an existing collection."""
+        return self.db[collection_name]
+
+    async def close(self):
+        """Closes the MongoDB connection."""
+        await self.client.close()
