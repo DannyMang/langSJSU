@@ -1,12 +1,12 @@
 from fastapi import WebSocket, status, Query
 from typing import Optional
-
-
 from ..redis.config import Redis
+
+redis = Redis()
+
 
 async def get_token(
     websocket: WebSocket,
-    redis: Redis,
     token: Optional[str] = Query(None),
 ):
 
