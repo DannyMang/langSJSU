@@ -1,3 +1,4 @@
+
 from .config import Redis
 
 class Producer:
@@ -12,3 +13,4 @@ class Producer:
 
         except Exception as e:
             print(f"Error sending msg to stream => {e}")
+            print("Data causing error:", data)

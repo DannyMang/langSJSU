@@ -1,17 +1,18 @@
 import os
-from fastapi import APIRouter, FastAPI, WebSocket, WebSocketDisconnect, Request, Depends, HTTPException
+from fastapi import APIRouter, FastAPI, WebSocketDisconnect, Request, Depends, HTTPException
 from fastapi.responses import JSONResponse
 import uuid
 from ..socket.connection import ConnectionManager
 from ..socket.utils import get_token
 from ..redis.producer import Producer
 from ..redis.config import Redis
-from src.schemas.chat import Chat, DataObject
+from src.schemas.chat import Chat
 from rejson import Path
 from ..redis.stream import StreamConsumer
 from ..redis.cache import Cache
 from ..mongodb.config import Mongo
 from ..mongodb.utils import vector_embedding, get_pdf_files
+from fastapi import WebSocket
 import time
 
 chat = APIRouter()
@@ -75,7 +76,7 @@ async def token_generator(email: str, request: Request):
     await redis_client.expire(str(token), 3600)
 
 
-    return chat_session.dict()
+    return chat_session.model_dump()
 
 
 
@@ -98,17 +99,11 @@ async def refresh_token(request: Request, token: str):
 # @desc    Socket for chat bot
 # @access  Public
 @chat.websocket("/chat")
-async def websocket_endpoint(websocket: WebSocket, token: str):
+async def websocket_endpoint(websocket: WebSocket, token: str = Depends(get_token)):
     await manager.connect(websocket)
-    #double check token 
-    try:{
-        await get_token(websocket,redis)
-    }
-    except(Exception):{
-           print("invalid token")
-     }
     redis_client = await redis.create_connection()
     producer = Producer(redis_client)
+    print(token)
 
     try:
         while True:

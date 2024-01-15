@@ -5,6 +5,9 @@ from dotenv import load_dotenv
 import multiprocessing
 from src.routes.chat import chat
 from fastapi.middleware.cors import CORSMiddleware
+import asyncio
+
+from src.redis.config import Redis
 
 
 load_dotenv()
@@ -26,10 +29,12 @@ api.add_middleware(
 async def root():
     return {'msg": "API is Online'}
 
-
 if __name__ == "__main__":
     if os.environ.get('APP_ENV') == "development":
         uvicorn.run("main:api", host="0.0.0.0", port=3500,
                     workers=4, reload=True)
     else:
         pass
+
+
+
