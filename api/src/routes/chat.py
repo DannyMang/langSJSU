@@ -99,12 +99,19 @@ async def refresh_token(request: Request, token: str):
 # @desc    Socket for chat bot
 # @access  Public
 @chat.websocket("/chat")
-async def websocket_endpoint(websocket: WebSocket, token: str ):
+async def websocket_endpoint(websocket: WebSocket, token: str = Depends(get_token)):
     await manager.connect(websocket)
+    redis_client = await redis.create_connection()
+    producer = Producer(redis_client)
+    print(token)
+
     try:
         while True:
             data = await websocket.receive_text()
             print(data)
+            stream_data = {}
+            stream_data[token] = data
+            await producer.add_to_stream(stream_data, "message_channel")
             await manager.send_personal_message(f"Response: Simulating response from the GPT service", websocket)
 
     except WebSocketDisconnect:

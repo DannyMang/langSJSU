@@ -13,10 +13,10 @@ class Redis():
         self.REDIS_HOST = os.environ['REDIS_HOST']
         self.REDIS_PORT = os.environ['REDIS_PORT']
         self.connection_url = f"redis://{self.REDIS_USER}:{self.REDIS_PASSWORD}@{self.REDIS_URL}"
-       
+
 
     async def create_connection(self):
-        self.connection = await aioredis.from_url(
+        self.connection = aioredis.from_url(
             self.connection_url, db=0)
 
         return self.connection
