@@ -1,4 +1,4 @@
-
+**DEPRECATED** // Redis Libraries no longer work past python 3.11, Also I do not have the API key for the Language model anymore (uses Hugging face pro subscription) 
 
 ![Alt text](images/IMG04.png "Project Architecture")
 
